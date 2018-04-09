@@ -24,6 +24,7 @@
 
   <p class="mb0 mt-">Filtre par year:</p>
   <select id="select2_years", multiple=true, style="width: 500px">
+    <!-- variable a bouger dans controller harbour -->
     <% Movement::ALL_YEARS.map do |y| %>
       <option value="<%= y %>"><%= y %></option>
     <% end %>

@@ -37,26 +37,20 @@ class Harbour < ApplicationRecord
     # (3) A (and/or 4) all sub fam, (5) tot flux (or exp + imp) [, (6) term, (7) pol_pod]
 
     # -> (1) from feature
+    @criterias = {}
     self.vol_filter_by_year(params) # -> (2)
     self.vol_filter_by_family(params) # -> (3) without (4)
     self.vol_filter_by_flow(params) # -> (5)
-    @totvol = @mvt_flow.pluck(:volume).sum
+    @totvol = movements.where(@criterias).pluck(:volume).sum
   end
 
   def vol_filter_by_year(params)
     # binding.pry
-    @mvts_year = []
-    if (params[:year])
-      params[:year].each do |y|
-        @mvts_year << self.movements.where(year: y)
-      end
+    @criterias[:year] = if (params[:year])
+      params[:year]
     else
-      # (2a) find max -> Model.maximum(column_name, options = {}) -> YEAR_MAX
-      # (2b) # for console self == Harbour.last + need initialize @ + << .first and .last
-      @mvts_year = self.movements.where(year: YEAR_MAX)
-      # @mvts_year = Harbour.last.movements.where(year: year_max) # for console only (small seeds)
+      YEAR_MAX
     end
-    return @mvts_year
   end
 
   def vol_filter_by_family(params)
@@ -75,7 +69,6 @@ class Harbour < ApplicationRecord
         end
       end
     end
-    return @mvts_fam
   end
 
   def vol_filter_by_flow(params)
@@ -93,7 +86,6 @@ class Harbour < ApplicationRecord
         end
       end
     end
-    return @mvt_flow
   end
 
     # # (4)

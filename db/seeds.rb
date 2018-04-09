@@ -28,11 +28,13 @@ ajaccio = Harbour.create!(
   name: "ajaccio",
   address: "ajaccio"
   )
+sleep(0.5)
 bastia = Harbour.create!(
   country: "France",
   name: "bastia",
   address: "bastia"
   )
+sleep(0.5)
 bayonne = Harbour.create!(
   country: "France",
   name: "bayonne",
