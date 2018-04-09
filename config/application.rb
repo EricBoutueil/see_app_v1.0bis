@@ -20,7 +20,6 @@ module SeeAppV11
 
     # Config needed for AJAX: insert in AJAX request a token identification
     # for forgery protection (CSRF) - NEVER DELETE / COMMENT IT !!!
-    config.action_view.embed_authenticity_token_in_remote_forms = true
 
     # config.assets.initialize_on_precompile = false
     # Settings in config/environments/* take precedence over those specified here.

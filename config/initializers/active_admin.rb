@@ -8,7 +8,7 @@ ActiveAdmin.setup do |config|
   # Set the title that is displayed on the main layout
   # for each of the active admin pages.
   #
-  config.site_title = "See App V1.0"
+  config.site_title = "Traffic Port - See App V1.1"
 
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.
@@ -157,11 +157,11 @@ ActiveAdmin.setup do |config|
   # To understand how to localize your app with I18n, read more at
   # https://github.com/svenfuchs/i18n/blob/master/lib%2Fi18n%2Fbackend%2Fbase.rb#L52
   #
-  config.localize_format = :custom_long
+  config.localize_format = :long
 
   # == Setting a Favicon
   #
-  # config.favicon = '../../assets/images/favicon.png'
+  # config.favicon = 'favicon.ico'
 
   # == Meta Tags
   #

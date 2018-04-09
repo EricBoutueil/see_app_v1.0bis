@@ -1,4 +1,7 @@
 ActiveAdmin.register Harbour do
+
+  actions :all, except: [:new, :destroy]
+
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 #
@@ -12,7 +15,7 @@ ActiveAdmin.register Harbour do
 #   permitted
 # end
 
-permit_params :country, :name, :address
+  permit_params :country, :name, :address
 
   index do
     selectable_column
