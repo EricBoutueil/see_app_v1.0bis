@@ -22,8 +22,7 @@ import 'select2/dist/css/select2.css';
 
 // event listener for each new selected harbour
 $('#select2_harbours').on("select2:select", (event) => {
-// take ALL the (un)selected harbour // submit form
-// build data in hash
+// take ALL the (un)selected harbour
   let values = [];
   $(event.currentTarget).find("option:selected").each(function(i, selected){
     values[i] = $(selected).text();
@@ -33,7 +32,7 @@ $('#select2_harbours').on("select2:select", (event) => {
   $.get({
     url: '/harbours',
     dataType: "script",
-    data: buildData() //harbourSelected}
+    data: {name: values}//harbourSelected}
   });
 });
 
@@ -41,7 +40,7 @@ $('#select2_harbours').on("select2:select", (event) => {
 $('#select2_harbours').on("select2:unselect", (event) => {
 // take ALL the (un)selected harbour
   let values = [];
-  $("#select2_harbours").find("option:selected").each(function(i, selected){
+  $(event.currentTarget).find("option:selected").each(function(i, selected){
     values[i] = $(selected).text();
   });
   console.log("harbours after unselected = " + values);
