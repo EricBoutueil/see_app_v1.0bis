@@ -12,8 +12,6 @@ class Movement < ApplicationRecord
     "#{self.type.code} #{self.type.flow}"
   end
 
-  # list of instance variables for each filter
-
   def self.all_years
     # binding.pry
     @years = []

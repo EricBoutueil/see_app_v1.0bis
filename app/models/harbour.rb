@@ -10,7 +10,14 @@ class Harbour < ApplicationRecord
   geocoded_by :full_address
   after_validation :geocode #:address_changed?
 
+
+  # @years = Movement.all_years
+
+  # ALL_YEARS = self.all_years
+
+
   YEAR_MAX = Movement.maximum("year") # to be updated with selharbours?
+
 
   def full_address
     "#{address}, #{country}"
@@ -37,63 +44,43 @@ class Harbour < ApplicationRecord
     # (3) A (and/or 4) all sub fam, (5) tot flux (or exp + imp) [, (6) term, (7) pol_pod]
 
     # -> (1) from feature
+    # building a criterias hash step by step
+    @mvts_criterias = {}
+    @types_criterias = {}
     self.vol_filter_by_year(params) # -> (2)
     self.vol_filter_by_family(params) # -> (3) without (4)
     self.vol_filter_by_flow(params) # -> (5)
-    @totvol = @mvt_flow.pluck(:volume).sum
+    @totvol = self.movements.includes(:type).where(@mvts_criterias, types: @types_criterias).pluck(:volume).sum
   end
 
   def vol_filter_by_year(params)
     # binding.pry
-    @mvts_year = []
-    if (params[:year])
-      params[:year].each do |y|
-        @mvts_year << self.movements.where(year: y)
-      end
+    @mvts_criterias[:year] = if (params[:year])
+      params[:year]
     else
-      # (2a) find max -> Model.maximum(column_name, options = {}) -> YEAR_MAX
-      # (2b) # for console self == Harbour.last + need initialize @ + << .first and .last
-      @mvts_year = self.movements.where(year: YEAR_MAX)
-      # @mvts_year = Harbour.last.movements.where(year: year_max) # for console only (small seeds)
+      YEAR_MAX
     end
-    return @mvts_year
   end
 
   def vol_filter_by_family(params)
     # (3) without (4)
-    if (params[:code]) # can only have 1 familly code, no .each needed
-      @mvts_fam = @mvts_year.select do |m|
-        m.where(code: params[:code]) # can include tot, imp, exp mvts
-      end
-      # end
+    # == a or b, c, d, e => code.length == 1
+    if (params[:code]) # note: can only have 1 familly code
+      @types_criterias[:type][:code] = params[:code] # can include tot, imp, exp mvts
     else
-      @mvts_fam = [] # ok with no filter
-      # binding.pry
-      @mvts_year.to_a.flatten.each do |m|
-        if m.type.code == "a"  # or b, c, d, e => code.length == 1
-          @mvts_fam << m
-        end
-      end
+      @types_criterias[:type] = {code: "a"}
     end
-    return @mvts_fam
   end
 
   def vol_filter_by_flow(params)
     # (5)
-    if (params[:flow] == ( "imp" || "exp" )) # can be either tot, imp or exp mvt
-      @mvt_flow = @mvts_fam.select do |m|
-         m.where(flow: params[:flow]) # can include only 1 flow
-      end
-    else
-      @mvt_flow = @mvts_fam.select do |m|
-        if m.type.flow.include?("tot")
-          m.where(type: {flow: "tot"})
-        else
-          @mvts_fam
-        end
+    if (params[:flow])
+      @types_criterias[:type][:flow] = if (params[:flow] == ( "imp" || "exp" )) # can be either tot, imp or exp mvt
+        params[:flow] # can include only 1 flow
+      else (params[:flow] == ( "tot"))
+        "tot"
       end
     end
-    return @mvt_flow
   end
 
     # # (4)
